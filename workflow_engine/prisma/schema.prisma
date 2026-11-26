@@ -7,10 +7,57 @@ datasource db {
   provider = "postgresql"
 }
 
+enum workflow_status {
+    COMPLETED
+    PENDING
+    FAILED
+    WAITING
+    RUNNING
+    CANCELED
+    SLEEPING
+    QUEUED
+}
+
+enum run_status {
+    COMPLETED
+    PENDING
+    RUNNING
+    WAITING
+    FAILED
+}
+
 model steps {
     run_id      Int         @default(autoincrement())
     step_key    String
     output      Json
 
     @@id([run_id, step_key])
+}
+
+model workflow_runs {
+    id          String      @id @default(uuid())
+    workflow_name String    
+    status        workflow_status
+    input         Json
+    output        Json?
+    error         Json?
+    idempotency_key String?
+    created_at      DateTime    @default(now())
+    updated_at      DateTime?   @updatedAt
+    steps           run_steps[]
+
+    @@unique([workflow_name, idempotency_key])
+}
+
+model run_steps {
+    run_id      String
+    run         workflow_runs   @relation(fields: [run_id], references: [id], onDelete: Cascade)
+    step_key    String
+    status      run_status
+    output      Json?
+    error       Json?
+    started_at  DateTime?
+    finished_at DateTime?
+
+    @@unique([run_id, step_key])
 }

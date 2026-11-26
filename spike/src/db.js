@@ -1,4 +1,4 @@
-import prisma from "../../config/prisma.config.js"
+import prisma from "../../workflow_engine/config/prisma.config.js"
 
 export async function createStep(runId, stepkey, output) {
     return prisma.steps.create({
