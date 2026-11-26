@@ -1,0 +1,16 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model steps {
+    run_id      Int         @default(autoincrement())
+    step_key    String
+    output      Json
+
+    @@id([run_id, step_key])
+}
