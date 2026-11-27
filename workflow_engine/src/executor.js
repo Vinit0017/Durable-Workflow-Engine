@@ -13,6 +13,7 @@ export async function claimNextRun(db) {
         
         return claimed;
     });
+    return result;
 };
 
 export async function executeClaimedRun(engine, run) {

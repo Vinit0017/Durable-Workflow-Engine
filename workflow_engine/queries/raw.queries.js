@@ -10,3 +10,7 @@ export async function findPendingWorkflowRun(db=prisma) {
     `;
     return rows;
 }
+
+export async function getConnection(db=prisma) {
+    return db.$queryRaw `SELECT 1`;
+}

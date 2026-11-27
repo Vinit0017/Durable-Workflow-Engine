@@ -21,6 +21,19 @@ export async function findWorkflowRun(name, idempotencyKey, db=prisma) {
     });
 };
 
+export async function findWorkflowRun(id, db=prisma) {
+    return db.workflow_runs.findUnique({
+        where:{
+            id: id,
+        },
+        include:{
+            steps:{
+                orderBy: {started_at: "asc"},
+            },
+        },
+    });
+};
+
 export async function updateWorkflowStatus(id, status, db=prisma) {
     return db.workflow_runs.update({
         where:{
@@ -54,5 +67,16 @@ export async function successfulWorkflowRun(id, status, output) {
             output: output === undefined ? null: output,
             error: null,
         },
+    });
+};
+
+export async function findWorkflowRuns(cursor, limit, db=prisma) {
+    return db.workflow_runs.findMany({
+        take: limit + 1,
+        ...(cursor && {
+            cursor: {id: cursor},
+            skip: 1,
+        }),
+        orderBy: [{created_at: "desc"},{id: "desc"}],
     });
 }
